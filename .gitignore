@@ -5,3 +5,4 @@ terraform.tfstate.backup
 .terraform/*
 terra-key-ansible.pem
 .terraform.tfstate.lock.info
+terra-key-ansible.pub
