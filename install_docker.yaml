@@ -1,0 +1,53 @@
+-
+
+- name: Install Docker on Ubuntu
+  hosts: junoon_servers
+  become: true
+
+  tasks:
+    - name: Get Docker URl 
+      get-url:
+       url: https://download.docker.com/linux/centos/docker-ce.repo
+       dest: /etc/yum.repos.d/docker.repo
+      when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" or ansible_distribution == "Amazon"
+
+    - name: Install Docker when OS is Redhat
+      dnf:
+        name: docker-ce
+        state: present
+      when: ansible_distribution == "RedHat"
+
+
+    - name: Install Docker when OS is Ubuntu
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_distribution == "Ubuntu"
+    
+
+    - name: Install Docker when OS is Amazon
+      dnf:
+        name: docker
+        state: present
+      when: ansible_distribution == "Amazon"
+    
+    - name: Start Docker Service 
+      service:
+        name: Docker
+        state: started
+        enabled: yes
+
+    - name: Add user to Docker group
+      user:
+        name: ansible_user_id
+        groups: docker
+        append: yes
+    
+    - name: Verify Docker Containers are Running
+      command: docker ps 
+
+    - name: update and upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: dist 
+      when: ansible_distribution == "Ubuntu"       
